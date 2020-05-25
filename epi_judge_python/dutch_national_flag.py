@@ -9,8 +9,30 @@ RED, WHITE, BLUE = range(3)
 
 
 def dutch_flag_partition(pivot_index: int, A: List[int]) -> None:
-    # TODO - you fill in here.
-    return
+    # swap the pivot to the last position
+    A[-1], A[pivot_index] = A[pivot_index], A[-1]
+    # 1st pass to put all the elems <= in the left and the elems > in the right
+    #   and get the new position of the pivot
+    p = sort_pivot(A, 0, len(A) - 1, lambda e1, e2: e1 > e2)
+    # 2nd pass to put all the elems < the piv in the left and the elems == in the
+    #   right
+    sort_pivot(A, 0, p, lambda e1, e2: e1 >= e2)
+
+
+def sort_pivot(array, start, piv_idx, comp) -> int:
+    while start < piv_idx:
+        if comp(array[start], array[piv_idx]):
+            piv_tmp = array[piv_idx]
+            array[piv_idx] = array[start]
+            piv_prev = array[piv_idx - 1]
+            array[piv_idx - 1] = piv_tmp
+            if start < piv_idx - 1:
+                array[start] = piv_prev
+            piv_idx -= 1
+        else:
+            start += 1
+
+    return piv_idx
 
 
 @enable_executor_hook
