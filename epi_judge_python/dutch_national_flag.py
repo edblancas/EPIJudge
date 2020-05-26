@@ -8,6 +8,28 @@ from test_framework.test_utils import enable_executor_hook
 RED, WHITE, BLUE = range(3)
 
 
+def dutch_flag_partition_book(pivot_index: int, A: List[int]) -> None:
+    piv = A[pivot_index]
+    # equals_idx is the one to compare
+    smaller_idx, equals_idx = 0, 0
+    larger_idx = len(A) - 1
+
+    # this need to be <= because we need to inspect the larger index also
+    # cause the larger_idx is the next to be placed, so its not compared
+    # already
+    # while equals_idx < larger_idx:
+    while equals_idx <= larger_idx:
+        if A[equals_idx] < piv:
+            A[smaller_idx], A[equals_idx] = A[equals_idx], A[smaller_idx]
+            smaller_idx += 1
+            equals_idx += 1
+        elif A[equals_idx] > piv:
+            A[larger_idx], A[equals_idx] = A[equals_idx], A[larger_idx]
+            larger_idx -= 1
+        else: # A[equals_idx] == piv
+            equals_idx += 1
+
+
 def dutch_flag_partition(pivot_index: int, A: List[int]) -> None:
     # swap the pivot to the last position
     A[-1], A[pivot_index] = A[pivot_index], A[-1]
