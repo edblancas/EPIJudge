@@ -3,6 +3,12 @@ from test_framework.test_failure import TestFailure
 
 
 def int_to_string(x: int) -> str:
+    """
+    Time O(n), n is the number of digits of x
+    Space O(n)
+    :param x:
+    :return:
+    """
     if x == 0:
         return '0'
 
@@ -37,7 +43,27 @@ def string_to_int(s: str) -> int:
     sum_ = 0
 
     def get_int(s):
-        return int(s)
+        """
+        If we can't use int(s) we do it with a switch statement
+        Time O(n), n is the length of s
+        Space O(1)
+        :param s:
+        :return:
+        """
+        switch = {
+            '0': 0,
+            '1': 1,
+            '2': 2,
+            '3': 3,
+            '4': 4,
+            '5': 5,
+            '6': 6,
+            '7': 7,
+            '8': 8,
+            '9': 9
+        }
+        return switch.get(s, 'default')
+        # return int(s)
 
     for n in reversed(s[start:]):
         num = get_int(n)
