@@ -3,13 +3,53 @@ from test_framework.test_failure import TestFailure
 
 
 def int_to_string(x: int) -> str:
-    # TODO - you fill in here.
-    return '0'
+    if x == 0:
+        return '0'
+
+    neg = False
+    if x < 0:
+        neg = True
+        x *= -1
+
+    res = x
+    nums = []
+
+    while res != 0:
+        rem = res % 10
+        res = res // 10
+        nums.append(str(rem))
+
+    if neg:
+        nums.append('-')
+
+    return ''.join(reversed(nums))
 
 
 def string_to_int(s: str) -> int:
-    # TODO - you fill in here.
-    return 0
+    if s[0] == '-' or s[0] == '+':
+        neg = True if s[0] == '-' else False
+        start = 1
+    else:
+        neg = False
+        start = 0
+
+    exp = 0
+    sum_ = 0
+
+    def get_int(s):
+        return int(s)
+
+    for n in reversed(s[start:]):
+        num = get_int(n)
+        # ^ IS THE XOR BITWISE!!!
+        # sum_ += num * (10 ^ exp)
+        sum_ += num * (10 ** exp)
+        exp += 1
+
+    if neg:
+        sum_ *= -1
+
+    return sum_
 
 
 def wrapper(x, s):
