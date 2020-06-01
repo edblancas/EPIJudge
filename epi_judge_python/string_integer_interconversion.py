@@ -1,8 +1,55 @@
 from test_framework import generic_test
 from test_framework.test_failure import TestFailure
+import functools
+import string
 
 
 def int_to_string(x: int) -> str:
+    neg = False
+    if x < 0:
+        x, neg = -x, True
+
+    s = []
+    while True:
+        s.append(chr(ord('0') + x % 10))
+        x = x // 10
+        if x == 0:
+            break
+
+    # here is the same error as below, the if expression need parentheses,
+    # without it, it returns the string '-' when neg is True
+    # return '-' if neg else '' + ''.join(reversed(s))
+    return ('-' if neg else '') + ''.join(reversed(s))
+
+
+# the next fails it returns all before the if statement if  s[0] == '-'
+#   otherwise the if expression returns 1
+# we need parenthesis between the if expression
+# def string_to_int_fail(s: str) -> int:
+#     return functools.reduce(
+#         lambda sum_, c: (sum_ * 10) + string.digits.index(c),
+#         s[s[0] == '-':],
+#         0
+#     ) * -1 if s[0] == '-' else 1
+
+
+def string_to_int(s: str) -> int:
+    return functools.reduce(
+        # here string.digits is only a string with the digits 0123456789
+        # and index return the index as int of c, is the same as find
+        # (so, you can also use find(c), as this return -1 if not found)
+        # but throws an error if c is not found
+        lambda sum_, c: sum_ * 10 + string.digits.index(c),
+        # if the first char of the str is + or - then return True, and its
+        # casted as 1, effectively skipping the sign. Otherwise return False
+        # casted as 0.
+        s[s[0] == '-' or s[0] == '+':],
+        0
+        # if its negative we multiply by -1
+    ) * (-1 if s[0] == '-' else 1)
+
+
+def int_to_string_me(x: int) -> str:
     """
     Time O(n), n is the number of digits of x
     Space O(n)
@@ -31,7 +78,7 @@ def int_to_string(x: int) -> str:
     return ''.join(reversed(nums))
 
 
-def string_to_int(s: str) -> int:
+def string_to_int_me(s: str) -> int:
     if s[0] == '-' or s[0] == '+':
         neg = True if s[0] == '-' else False
         start = 1
