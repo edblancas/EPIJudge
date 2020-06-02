@@ -7,7 +7,12 @@ from test_framework.test_utils import enable_executor_hook
 
 # Insert new_node after node.
 def insert_after(node: ListNode, new_node: ListNode) -> None:
-    node.next, new_node.next = new_node, node.next
+    # node.next, new_node.next = new_node, node.next
+    # we don't need the one liner, because we are not swapping variables, so
+    #   we don't need copy of vars
+    # but the order of the assignments matter.
+    new_node.next = node.next
+    node.next = new_node
     return
 
 
