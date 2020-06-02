@@ -3,11 +3,9 @@ from test_framework import generic_test
 
 
 def search_list(L: ListNode, key: int) -> ListNode:
-    while L:
-        if L.data == key:
-            break
+    while L and L.data != key:
         L = L.next
-    return L if L is not None else None
+    return L
 
 
 def search_list_wrapper(L, key):
