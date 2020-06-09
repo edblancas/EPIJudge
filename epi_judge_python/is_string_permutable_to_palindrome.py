@@ -1,8 +1,16 @@
 from test_framework import generic_test
+from collections import defaultdict
 
 
 def can_form_palindrome(s: str) -> bool:
-    # TODO - you fill in here.
+    chrs = defaultdict(lambda: 0)
+    for c in s:
+        chrs[c] += 1
+    odds = 0
+    for v in chrs.values():
+        odds += int(v % 2 == 1)
+        if odds > 1:
+            return False
     return True
 
 
