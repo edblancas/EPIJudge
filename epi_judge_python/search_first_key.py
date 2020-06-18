@@ -4,7 +4,7 @@ from test_framework import generic_test
 
 
 def search_first_of_k(A: List[int], k: int) -> int:
-   s = 0
+    s = 0
     e = len(A) - 1
     first_ocurr = -1
     while s <= e:
