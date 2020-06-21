@@ -2,36 +2,80 @@ from binary_tree_node import BinaryTreeNode
 from test_framework import generic_test
 
 
-def is_binary_tree_bst(tree: BinaryTreeNode) -> bool:
-    def is_tree_bst(tree):
-        def max_left(t):
-            if not t:
-                return float('-inf')
-            return max(t.data, max_left(t.left), max_left(t.right))
+class Solution:
+    def isValidBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        stack, inorder = [], float('-inf')
 
-        def min_right(t):
-            if not t:
-                return float('inf')
-            return min(t.data, min_right(t.left), min_right(t.right))
-
-        left = max_left(tree.left)
-        right = min_right(tree.right)
-        # print("tree.data:", tree.data, ', left:', left, ', right:', right)
-        return left <= tree.data <= right
-
-    def dfs(tree):
-        if not tree:
-            return True
-        if is_tree_bst(tree):
-            if not dfs(tree.left):
+        while stack or root:
+            while root:
+                stack.append(root)
+                root = root.left
+            root = stack.pop()
+            # If next element in inorder traversal
+            # is smaller than the previous one
+            # that's not BST.
+            if root.data < inorder:
                 return False
-            if not dfs(tree.right):
-                return False
-        else:
-            return False
+            inorder = root.data
+            root = root.right
+
         return True
 
-    return dfs(tree)
+
+class Solution2(object):
+    def validBSTHelper(self, root):
+        if not root:
+            return True
+
+        res = self.validBSTHelper(root.left)
+
+        if not self.prev:
+            self.prev = root
+        else:
+            if root.data < self.prev.data:
+                res = False
+            self.prev = root
+
+        res = res and self.validBSTHelper(root.right)
+
+        return res
+
+    def isValidBST(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        self.prev = None
+        return self.validBSTHelper(root)
+
+
+class InOrderSol:
+    @staticmethod
+    def solution(tree):
+        prev = float('-inf')
+
+        def check_bst(root):
+            nonlocal prev
+
+            if not root:
+                return True
+
+            if not check_bst(root.left):
+                return False
+            if root.data < prev:
+                return False
+            prev = root.data
+            return check_bst(root.right)
+
+        return check_bst(tree)
+
+
+def is_binary_tree_bst(tree: BinaryTreeNode) -> bool:
+    return InOrderSol.solution(tree)
 
 
 if __name__ == '__main__':
