@@ -1,3 +1,5 @@
+import collections
+
 from binary_tree_node import BinaryTreeNode
 from test_framework import generic_test
 
@@ -74,8 +76,28 @@ class InOrderSol:
         return check_bst(tree)
 
 
+class BFSSol:
+    @staticmethod
+    def solution(tree):
+        QueueEntry = collections.namedtuple('QueueEntry', 'infbound, upbound, n')
+        q = collections.deque([QueueEntry(float('-inf'), float('inf'), tree)])
+        while q:
+            e = q.popleft()
+            if e.n:
+                # if e.infbound >= e.n.data >= e.upbound:
+                # if e.infbound >= e.n.data or e.n.data >= e.upbound:
+                if not e.upbound >= e.n.data >= e.infbound:
+                    return False
+                if e.n.left:
+                    q.append(QueueEntry(e.infbound, e.n.data, e.n.left))
+                if e.n.right:
+                    q.append(QueueEntry(e.n.data, e.upbound, e.n.right))
+
+        return True
+
+
 def is_binary_tree_bst(tree: BinaryTreeNode) -> bool:
-    return InOrderSol.solution(tree)
+    return BFSSol.solution(tree)
 
 
 if __name__ == '__main__':
