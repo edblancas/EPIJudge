@@ -9,8 +9,18 @@ NUM_PEGS = 3
 
 
 def compute_tower_hanoi(num_rings: int) -> List[List[int]]:
-    # TODO - you fill in here.
-    return []
+    r = []
+    hanoi(num_rings, 0, 1, 2, r)
+    return r
+
+
+def hanoi(n, f, t, h, r):
+    if n == 0:
+        pass
+    else:
+        hanoi(n - 1, f, h, t, r)
+        r.append([f, t])
+        hanoi(n - 1, h, t, f, r)
 
 
 @enable_executor_hook
