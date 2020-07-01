@@ -36,38 +36,47 @@ def search_maze(maze: List[List[int]], s: Coordinate,
     r = collections.deque()
     q = collections.deque()
     q.append(s)
-    paths = collections.defaultdict(set)
+    # WRONG: We are tempted to doit as a dict with a list
+    # because most possible than a node have more than one
+    # parent, but as is BFS any node give us the shortest path.
+    # paths = collections.defaultdict(list)
+    paths = collections.defaultdict(list)
 
     def bfs():
         found = False
         while q:
             curr = q.popleft()
-            print(curr)
-            # we are adding frozenset({4, 7}), when curr is {7, 4}
-            # that's because the set do not guarantee place, we
-            # need to use a tuple
-            v.add(frozenset(curr))
+            # add this check
+            if curr in v:
+                continue
+            v.add(curr)
+            # there maybe coordinates printed repeated, that is
+            # because we added to the queue before it was in the
+            # set v (visited), but the next time when we try to
+            # add its neighbors, it is gonna be in v, so the neighbors
+            # are not gonna be added double.
+            # print(curr)
             if curr == e:
                 found = True
                 break
             for p in go:
                 next_p = Coordinate(curr.x + p.x, curr.y + p.y)
-                print(v)
-                if possible(next_p) and frozenset(next_p) not in v:
-                    paths[frozenset(next_p)].add(frozenset(curr))
-                    # print('ss', curr, next_p)
+                if possible(next_p) and next_p not in v:
                     q.append(next_p)
+                    # here we can see that a next_p can have more than
+                    # one parent curr, but we can take anyone, so we
+                    # only keep track of one parent
+                    # paths[next_p].append(curr)
+                    # print('-->', len(paths[next_p]))
+                    paths[next_p] = curr
         return found
 
     if bfs():
         r.append(e)
-        # curr = e
-        # print(paths[frozenset(curr)])
-        # while curr != s:
-        #     curr = paths[frozenset(curr)]
-        #     print(curr)
-        #     r.appendleft(curr)
-        # print(paths)
+        curr = e
+        while curr != s:
+            curr = paths[curr]
+            r.appendleft(curr)
     else:
         return []
     return list(r)
