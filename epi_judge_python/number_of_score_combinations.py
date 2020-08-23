@@ -5,32 +5,60 @@ from test_framework import generic_test
 
 def num_combinations_for_final_score(final_score: int,
                                      individual_play_scores: List[int]) -> int:
-    if final_score == 0:
-        return 1
+    memo = dict()
+    def go(cur_sum, idx):
+        k = (cur_sum, idx)
+        if k in memo:
+            return memo[k]
 
-    scores = individual_play_scores
-    total = final_score
-    rows = range(len(scores))
-    cols = range(total + 1)
-    t = [[0 for _ in cols] for _ in rows]
-    for row in rows:
-        curr_scores_range = range(row + 1)
-        for col in cols:
-            curr_total = col
-            sum_ways = 0
-            for curr_score_idx in curr_scores_range:
-                delta = curr_total - scores[curr_score_idx]
-                if delta >= 0:
-                    if delta == 0:
-                        sum_ways += 1
-                    else:
-                        sum_ways += t[curr_score_idx][delta]
-            t[row][col] = sum_ways
-    return t[-1][-1]
+        if cur_sum == final_score:
+            return  1
+        elif cur_sum > final_score:
+            return 0
 
+        sum_ = 0
+        for i in range(idx, len(individual_play_scores)):
+            sum_ += go(individual_play_scores[i] + cur_sum, i)
+
+        memo[k] = sum_
+        print(k, sum_)
+        return sum_
+
+
+    def go_it():
+        dp = [[1] + [0] * final_score 
+              for _ in individual_play_scores]
+
+        for score in range(1, final_score + 1):
+            if individual_play_scores[0] > score: continue
+            dp[0][score] = dp[0][score - individual_play_scores[0]]
+
+        for play in range(1, len(individual_play_scores)):
+            for score in range(1, final_score + 1):
+                # Watch for negative array indexes, in this case we only add the above result
+                # I was not putting the next if
+                if individual_play_scores[play] > score: 
+                    dp[play][score] = dp[play - 1][score]
+
+                else:
+                    dp[play][score] = dp[play - 1][score] + dp[play][score - individual_play_scores[play]]
+
+        # print(dp)
+        return dp[len(individual_play_scores) - 1][final_score]
+
+    # return go(0,0)
+    return go_it()
 
 if __name__ == '__main__':
     exit(
         generic_test.generic_test_main('number_of_score_combinations.py',
                                        'number_of_score_combinations.tsv',
                                        num_combinations_for_final_score))
+"""
+
+[
+[1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1], 
+[1, 0, 0, 1, 1, 0, 2, 1, 1, 2, 2, 1, 3],
+[1, 0, 0, 0, 0, 0, 0, 2, 1, 2, 2, 1, 3]]
+
+"""
