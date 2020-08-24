@@ -46,8 +46,17 @@ def num_combinations_for_final_score(final_score: int,
         # print(dp)
         return dp[len(individual_play_scores) - 1][final_score]
 
+    def go_it_constant_space():
+        dp = [1] + [0] * final_score
+        for play in range(len(individual_play_scores)):
+            for score in range(1, final_score + 1):
+                if individual_play_scores[play] > score: continue
+                dp[score] = dp[score] + dp[score - individual_play_scores[play]]
+        return dp[-1]
+
     # return go(0,0)
-    return go_it()
+    # return go_it()
+    return go_it_constant_space()
 
 if __name__ == '__main__':
     exit(
