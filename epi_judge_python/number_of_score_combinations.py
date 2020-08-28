@@ -17,52 +17,69 @@ def num_combinations_for_final_score(final_score: int,
             return 0
 
         sum_ = 0
-        for i in range(idx, len(individual_play_scores)):
+        for i in range(len(individual_play_scores)):
             sum_ += go(individual_play_scores[i] + cur_sum, i)
 
         memo[k] = sum_
-        print(k, sum_)
         return sum_
 
 
-    def go_it():
-        dp = [[1] + [0] * final_score 
-              for _ in individual_play_scores]
+    def go2(cur_sum, idx):
+        k = cur_sum
+        if k in memo:
+            print('memo', k, memo[k])
+            return memo[k]
 
-        for score in range(1, final_score + 1):
-            if individual_play_scores[0] > score: continue
-            dp[0][score] = dp[0][score - individual_play_scores[0]]
+        if cur_sum == final_score:
+            return  1
+        elif cur_sum > final_score:
+            return 0
 
-        for play in range(1, len(individual_play_scores)):
-            for score in range(1, final_score + 1):
-                # Watch for negative array indexes, in this case we only add the above result
-                # I was not putting the next if
-                if individual_play_scores[play] > score: 
-                    dp[play][score] = dp[play - 1][score]
+        sum_ = 0
+        for i in range(len(individual_play_scores)):
+            sum_ += go2(individual_play_scores[i] + cur_sum, i)
 
-                else:
-                    dp[play][score] = dp[play - 1][score] + dp[play][score - individual_play_scores[play]]
+        memo[k] = sum_
+        print('calculated', k, memo[k])
+        return sum_
 
-        # print(dp)
-        return dp[len(individual_play_scores) - 1][final_score]
 
-    def go_it_constant_space():
-        dp = [1] + [0] * final_score
-        for play in range(len(individual_play_scores)):
-            for score in range(1, final_score + 1):
-                if individual_play_scores[play] > score: continue
-                dp[score] = dp[score] + dp[score - individual_play_scores[play]]
-        return dp[-1]
+    def go_no_idx(cur_sum):
+        k = cur_sum
+        if k in memo:
+            return memo[k]
 
-    # return go(0,0)
-    # return go_it()
-    return go_it_constant_space()
+        if cur_sum == final_score:
+            return  1
+        elif cur_sum > final_score:
+            return 0
+
+        sum_ = 0
+        for play in individual_play_scores:
+            sum_ += go_no_idx(play + cur_sum)
+
+        memo[k] = sum_
+        return sum_
+
+    def go_bottom(left_sum):
+        if left_sum == 0:
+            return 1
+        if left_sum < 0:
+            return 0
+        s = 0
+        for play in individual_play_scores:
+            s += go_bottom(left_sum - play)
+        return s
+
+    # return go(0, 0)
+    # return go_no_idx(0)
+    r = go2(0, 0)
+    print(memo)
+    return r
+
 
 if __name__ == '__main__':
-    exit(
-        generic_test.generic_test_main('number_of_score_combinations.py',
-                                       'number_of_score_combinations.tsv',
-                                       num_combinations_for_final_score))
+   print(num_combinations_for_final_score(12, [2,3,7]))
 """
 
 [
